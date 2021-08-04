@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+    laravel-db:
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: Admin.2019
+            MYSQL_DATABASE: larave_prod
+            MYSQL_USER: usr_laravel
+            MYSQL_PASSWORD: Usr.db.2019
+        ports:
+            - 33068:3306
+        volumes:
+            - ./docker/mysql/:/var/lib/mysql
+        networks:
+            laravel_prod_net:
+                ipv4_address: 173.21.100.9
+
+    laravel-prod:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        ports:
+            - 8200:80
+        volumes:
+            - .:/var/www/
+            - ./public:/var/www/html
+        networks:
+            laravel_prod_net:
+                ipv4_address: 173.21.100.10
+        depends_on:
+            - laravel-db
+networks:
+    laravel_prod_net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 173.21.100.0/24
